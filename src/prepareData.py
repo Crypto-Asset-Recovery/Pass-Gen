@@ -44,7 +44,7 @@ def prepareData(data = None):
     vocab = torchtext.vocab.build_vocab_from_iterator(passwords)
 
     # Convert passwords to tensors
-    passwords = [torch.tensor([vocab[token] for token in password]) for password in passwords]
+    passwords = [torch.tensor([vocab[token] for token in password], dtype=torch.long) for password in passwords]
 
     if data is None:
         train_data, val_data = train_test_split(passwords, test_size=0.2, random_state=42)
