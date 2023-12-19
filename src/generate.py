@@ -3,7 +3,14 @@ import random
 
 import string
 
-def generate_password(model, vocab, length, temperature=1.0):
+from config import device
+
+def generate_password(model, vocab, length, temperature=0.8):
+
+    # Set model to evaluation mode
+    model.to(device)
+    model.eval()
+
     # Helper function to count character types
     def count_char_types(password):
         count_alpha = sum(c in string.ascii_letters for c in password)
@@ -12,9 +19,6 @@ def generate_password(model, vocab, length, temperature=1.0):
         
         return count_alpha, count_digits, count_symbols
     
-    # Use GPU if available
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     while True:
         # Initialize hidden state
         hidden = model.init_hidden(1)

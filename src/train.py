@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 
+from config import device
+
 def train(model, train_loader, val_loader, num_epochs, lr, gradient_accumulation_steps):
     # Define loss function and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -17,7 +19,6 @@ def train(model, train_loader, val_loader, num_epochs, lr, gradient_accumulation
         optimizer = optim.Adam(model.parameters(), lr=lr)
 
     # Use GPU if available
-    device = torch.device("cpu")
     model.to(device)
 
     # Train model

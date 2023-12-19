@@ -6,6 +6,7 @@ from src.model import RNN
 from src.train import train
 from src.generate import generate_password
 
+from config import *
 
 def main(args):
     # Preprocess data and create dataloaders
@@ -17,9 +18,6 @@ def main(args):
         num_layers = args.load_num_layers
 
     model = RNN(len(vocab), args.embedding_size, args.hidden_size, num_layers, args.dropout)
-
-    # Load the trained model
-    model_path = 'models/100k/fine-tuned-5-epochs-4-gradient-accumulation.pth'
 
     if args.model_path:
         model_path = args.model_path
@@ -71,17 +69,17 @@ def unique_percentage(input_list):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Password Generator")
-    parser.add_argument("--batch_size", default=16, type=int)
-    parser.add_argument("--seq_len", default=20, type=int)
-    parser.add_argument("--password_length", default=10, type=int)
-    parser.add_argument("--num_passwords", default=20, type=int)
-    parser.add_argument("--temperature", default=0.5, type=float)
-    parser.add_argument("--embedding_size", default=128, type=int)
-    parser.add_argument("--hidden_size", default=256, type=int)
-    parser.add_argument("--num_layers", default=3, type=int)
-    parser.add_argument("--dropout", default=0.5, type=float)
-    parser.add_argument("--model_path", default=None, type=str)
-    parser.add_argument("--load_num_layers", default=None, type=int)
+    parser.add_argument("--batch_size", default=batch_size, type=int)
+    parser.add_argument("--seq_len", default=seq_len, type=int)
+    parser.add_argument("--password_length", default=password_length, type=int)
+    parser.add_argument("--num_passwords", default=num_passwords, type=int)
+    parser.add_argument("--temperature", default=temperature, type=float)
+    parser.add_argument("--embedding_size", default=embedding_size, type=int)
+    parser.add_argument("--hidden_size", default=hidden_size, type=int)
+    parser.add_argument("--num_layers", default=num_layers, type=int)
+    parser.add_argument("--dropout", default=dropout, type=float)
+    parser.add_argument("--model_path", default=model_path, type=str)
+    parser.add_argument("--load_num_layers", default=num_layers, type=int)
 
     args = parser.parse_args()
     main(args)

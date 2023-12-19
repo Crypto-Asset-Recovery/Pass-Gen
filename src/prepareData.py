@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 
 import string
 
+from config import *
+
 def has_alpha_numeric_symbol(password):
     has_alpha = any(c.isalpha() for c in password)
     has_numeric = any(c.isdigit() for c in password)
@@ -21,7 +23,7 @@ def has_alpha_numeric_symbol(password):
 
 def prepareData(data = None):
     if data is None:
-        with open('wordlists/top100k.txt', 'r', encoding='utf-8', errors='ignore') as f:
+        with open(wordlist_path, 'r', encoding='utf-8', errors='ignore') as f:
             passwords = f.readlines()
     else:
         passwords = data
