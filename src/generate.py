@@ -3,10 +3,9 @@ import random
 
 import string
 
-from config import device
+from config import *
 
 def generate_password(model, vocab, length, temperature=0.8):
-
     # Set model to evaluation mode
     model.to(device)
     model.eval()
@@ -40,15 +39,16 @@ def generate_password(model, vocab, length, temperature=0.8):
             distribution = output.squeeze().div(temperature).exp()
             char_idx = torch.multinomial(distribution, 1).item()
 
-            # Convert tensor back to character and add to password
+            # Convert tensor back to character
             char = vocab.get_itos()[char_idx]
 
-            # Break if <eos> token is encountered
-            if char == '<eos>':
+            # Skip the EOS token
+            if char == EOS_TOKEN:
                 break
 
             password.append(char)
 
+        # Join characters to form the password string
         password_str = "".join(password)
 
         # Check password length and character types
@@ -57,5 +57,4 @@ def generate_password(model, vocab, length, temperature=0.8):
             if sum([count_alpha > 0, count_digits > 0, count_symbols > 0]) >= 2:
                 break
 
-    return password_str
-
+    return password_str.replace(str(EOS_TOKEN), '')

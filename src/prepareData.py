@@ -28,6 +28,8 @@ def prepareData(data = None):
     else:
         passwords = data
 
+    passwords = [password.strip() + EOS_TOKEN for password in passwords]
+
     # Define regular expression to remove non-ASCII characters
     regex = re.compile(r'[^\x00-\x7F]+')
 
@@ -41,7 +43,7 @@ def prepareData(data = None):
     passwords = [char_tokenizer(password) for password in passwords]
 
     # Define vocabulary
-    vocab = torchtext.vocab.build_vocab_from_iterator(passwords)
+    vocab = torchtext.vocab.build_vocab_from_iterator(passwords, specials=[EOS_TOKEN])
 
     # Convert passwords to tensors
     passwords = [torch.tensor([vocab[token] for token in password], dtype=torch.long) for password in passwords]

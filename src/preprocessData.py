@@ -1,6 +1,8 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 
+from config import *
+
 class PasswordDataset(Dataset):
     def __init__(self, passwords, seq_length):
         self.passwords = passwords
@@ -19,7 +21,6 @@ class PasswordDataset(Dataset):
         # Truncate password if longer than seq_length
         password = password[:self.seq_length]
 
-        # Return input and target tensors
         return password[:-1], password[1:]
 
 def get_dataloaders(train_data, val_data, batch_size, seq_length):
