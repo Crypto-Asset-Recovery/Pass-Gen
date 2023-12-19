@@ -26,7 +26,7 @@ def get_dataloaders(train_data, val_data, batch_size, seq_length):
     train_dataset = PasswordDataset(train_data, seq_length)
     val_dataset = PasswordDataset(val_data, seq_length)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0, drop_last=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0, drop_last=True)
 
     return train_loader, val_loader
