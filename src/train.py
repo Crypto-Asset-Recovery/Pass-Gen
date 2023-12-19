@@ -18,6 +18,10 @@ def train(model, train_loader, val_loader, num_epochs, lr, gradient_accumulation
     else:
         optimizer = optim.Adam(model.parameters(), lr=lr)
 
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs!")
+        model = nn.DataParallel(model)
+
     # Use GPU if available
     model.to(device)
 
