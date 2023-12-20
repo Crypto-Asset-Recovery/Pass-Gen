@@ -1,6 +1,6 @@
 rockyou.txt
 top1m.txt
-models
+
 archive
 src/__pycache__
 *.pth
