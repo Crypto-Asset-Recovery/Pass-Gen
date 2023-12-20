@@ -28,14 +28,14 @@ def main(args):
     passwords = []
     count = 0
     for i in range(args.num_passwords):
-        password = generate_password(model, vocab, args.password_length, args.temperature)
+        password = generate_password(model, vocab, args.password_length, args.temperature, seed=args.seed)
         print(f"{count}/{args.num_passwords}: {password.replace('.', '')}")
         passwords.append(password.replace('.', ''))
         count += 1
     
     # Check how many of the generated passwords are in the file
-    percentage = check_passwords_in_file(passwords, 'wordlists/rockyou.txt')
-    print(f"{percentage}% of the generated passwords found in rockyou.txt")
+    percentage = check_passwords_in_file(passwords, 'wordlists/top10m.txt')
+    print(f"{percentage}% of the generated passwords found in top1m.txt")
 
     unique = unique_percentage(passwords)
     print(f"{unique}% of the generated passwords are unique")
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     parser.add_argument("--dropout", default=dropout, type=float)
     parser.add_argument("--model_path", default=model_path, type=str)
     parser.add_argument("--load_num_layers", default=num_layers, type=int)
+    parser.add_argument("--seed", default=None, type=str, help="Seed for password generation")
 
     args = parser.parse_args()
     main(args)

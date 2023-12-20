@@ -5,7 +5,7 @@ import string
 
 from config import *
 
-def generate_password(model, vocab, length, temperature=0.8):
+def generate_password(model, vocab, length, temperature=0.8, seed=None):
     # Set model to evaluation mode
     model.to(device)
     model.eval()
@@ -23,9 +23,13 @@ def generate_password(model, vocab, length, temperature=0.8):
         hidden = model.init_hidden(1)
         password = []
 
-        # Choose a random starting character
-        start_char = random.choice(list(vocab.get_stoi().keys()))
-        password.append(start_char)
+        # Start with the seed if provided
+        if seed:
+            password.extend(seed)
+        else:
+            # Choose a random starting character if no seed is provided
+            start_char = random.choice(list(vocab.get_stoi().keys()))
+            password.append(start_char)
 
         # Generate password
         while len(password) < length:
@@ -37,13 +41,16 @@ def generate_password(model, vocab, length, temperature=0.8):
 
             # Sample from output distribution
             distribution = output.squeeze().div(temperature).exp()
-            char_idx = torch.multinomial(distribution, 1).item()
+            try:
+                char_idx = torch.multinomial(distribution, 1).item()
+            except RuntimeError as e:
+                continue
 
             # Convert tensor back to character
             char = vocab.get_itos()[char_idx]
 
             # Skip the EOS token
-            if char == EOS_TOKEN:
+            if char == EOS_TOKEN or char == '<':
                 break
 
             password.append(char)

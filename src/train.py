@@ -10,13 +10,13 @@ def train(model, train_loader, val_loader, num_epochs, lr, gradient_accumulation
     criterion = nn.CrossEntropyLoss()
     if type(lr) == list:
         # Define the optimizer with different learning rates for each layer group
-        optimizer = optim.Adam([
+        optimizer = optim.AdamW([
             {'params': model.embedding.parameters(), 'lr': lr[0]},
             {'params': model.rnn.parameters(), 'lr': lr[1]},
             {'params': model.fc.parameters(), 'lr': lr[2]},
         ])
     else:
-        optimizer = optim.Adam(model.parameters(), lr=lr)
+        optimizer = optim.AdamW(model.parameters(), lr=lr)
 
     if torch.cuda.device_count() > 1:
         print(f"Using {torch.cuda.device_count()} GPUs!")
@@ -24,6 +24,8 @@ def train(model, train_loader, val_loader, num_epochs, lr, gradient_accumulation
 
     # Use GPU if available
     model.to(device)
+
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.5, patience=2, verbose=True)
 
     # Train model
     for epoch in range(num_epochs):
@@ -79,6 +81,12 @@ def train(model, train_loader, val_loader, num_epochs, lr, gradient_accumulation
         train_loss /= len(train_loader)
         val_loss /= len(val_loader)
         print(f"Epoch {epoch + 1}/{num_epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
+        # Print learning rates
+        for i, group in enumerate(optimizer.param_groups):
+            print(f"Learning rate for parameter group {i}: {group['lr']:.6f}")
+
+        scheduler.step(val_loss)
 
     return model
 

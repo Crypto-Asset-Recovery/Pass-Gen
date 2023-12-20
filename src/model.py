@@ -9,14 +9,16 @@ class RNN(nn.Module):
         self.fc = nn.Linear(hidden_size, vocab_size)
 
         self.num_layers = num_layers
-        self.hidden_size = hidden_size  # add this line
+        self.hidden_size = hidden_size
 
+        self._init_weights()
+
+    def _init_weights(self):
         for name, param in self.named_parameters():
             if 'weight' in name:
-                nn.init.xavier_uniform_(param)
-            if 'bias' in name:
-                nn.init.zeros_(param)
-
+                nn.init.normal_(param, mean=0.0, std=0.1)
+            elif 'bias' in name:
+                nn.init.constant_(param, 0)
 
     def forward(self, x, hidden):
         embedded = self.embedding(x)
@@ -26,20 +28,7 @@ class RNN(nn.Module):
         return output, hidden
 
     def init_hidden(self, batch_size):
-        weight = next(self.parameters())
+        weight = next(self.parameters()).data
         hidden = (weight.new_zeros(self.num_layers, batch_size, self.hidden_size),
                   weight.new_zeros(self.num_layers, batch_size, self.hidden_size))
         return hidden
-
-class FineTuneModel(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(FineTuneModel, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, output_size)
-
-    def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
-        return x
