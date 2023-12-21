@@ -9,21 +9,19 @@ from src.generate import generate_password
 from config import *
 
 def main(args):
-    # Preprocess data and create dataloaders
-    _, _, vocab = prepareData()
+    checkpoint = torch.load(model_path, map_location=device)
 
-    # Create RNN model
-    num_layers = args.num_layers
-    if args.load_num_layers:
-        num_layers = args.load_num_layers
-
-    model = RNN(len(vocab), args.embedding_size, args.hidden_size, num_layers, args.dropout)
-
-    if args.model_path:
-        model_path = args.model_path
-
-    model.load_state_dict(torch.load(model_path))
-
+    model = RNN(
+        len(checkpoint['vocab']),
+        checkpoint['embedding_size'],
+        checkpoint['hidden_size'],
+        checkpoint['num_layers'],
+        checkpoint['dropout']
+    )
+    
+    model.load_state_dict(checkpoint['model_state_dict'])
+    vocab = checkpoint['vocab']
+    
     # Generate passwords
     passwords = []
     count = 0

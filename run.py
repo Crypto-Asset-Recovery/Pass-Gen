@@ -19,16 +19,18 @@ def main(args):
     # Train model
     trained_model = train(model, train_loader, val_loader, args.num_epochs, args.lr, args.gradient_accumulation_steps)
 
-    # Save the trained model
-    torch.save(trained_model.state_dict(), args.model_path)
-
-    # Load the trained model
-    loaded_model = RNN(len(vocab), args.embedding_size, args.hidden_size, args.num_layers, args.dropout)
-    loaded_model.load_state_dict(torch.load(args.model_path))
+    torch.save({
+        'model_state_dict': trained_model.state_dict(),
+        'vocab': vocab,
+        'embedding_size': args.embedding_size,
+        'hidden_size': args.hidden_size,
+        'num_layers': args.num_layers,
+        'dropout': args.dropout
+    }, args.model_path)
 
     # Generate passwords
     for i in range(args.num_passwords):
-        password = generate_password(loaded_model, vocab, args.password_length, args.temperature)
+        password = generate_password(trained_model, vocab, args.password_length, args.temperature)
         print(f"Password {i + 1}: {password}")
 
 if __name__ == '__main__':

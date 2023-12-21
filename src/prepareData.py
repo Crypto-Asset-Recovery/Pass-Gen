@@ -28,6 +28,10 @@ def prepareData(data = None):
     else:
         passwords = data
 
+    # Remove passwords that have more than 2 non-alphanumeric characters (symbols) or start with a symbol
+    passwords = [password for password in passwords if sum(not char.isalnum() for char in password) <= 2 and password[0].isalnum()]
+
+    # Add end-of-sequence token
     passwords = [password.strip() + EOS_TOKEN for password in passwords]
 
     # Define regular expression to remove non-ASCII characters
